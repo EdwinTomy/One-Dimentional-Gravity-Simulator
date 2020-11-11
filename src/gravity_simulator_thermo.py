@@ -17,7 +17,7 @@ from math import exp
 upper_border = 5
 time_step = 0.001
 soften = 1 #exponente^(-r/lamba)
-lam = 10
+lam = 1
 
 class Particle():
     def __init__(self, mass, vel, x_pos):
@@ -26,7 +26,7 @@ class Particle():
         self.x_pos = x_pos
         
     def potential_U(self, other):
-        return - abs(G * self.mass * other.mass / (other.x_pos - self.x_pos))
+        return -abs(G * self.mass * other.mass / (other.x_pos - self.x_pos))
     
     def kinetic_E(self):
         return self.mass * self.vel * self.vel / 2
@@ -51,7 +51,7 @@ def acc(particle, other, soften = soften):
     
     #force = G * particle.mass * other_particle.mass/((other.x_pos - particle.x_pos)**2 + soften)
     r = other.x_pos - particle.x_pos
-    force = G * particle.mass * other.mass/((r**2) + lambda_F(r))
+    force = G * particle.mass * other.mass/((r**2) )#+ lambda_F(r))
 
     force *= np.sign(other.x_pos - particle.x_pos)
     return force/particle.mass
@@ -107,7 +107,7 @@ def iteration(a, b, phantom = True, ellastic = True, step = time_step):
 a = Particle(10000000000, 0, 1.5)
 b = Particle(10000000000, 0, 3.5)
 
-time_phantom = 2000
+time_phantom = 30000
 arr_phantom = np.zeros((time_phantom, 2, 4))
 
 # Index 0: Which time mark

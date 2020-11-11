@@ -20,7 +20,7 @@ soften = 1 #exponente^(-r/lamba)
 lam = 0.1
 
 class Particle():
-    def __init__(self, mass, vel, x_pos, rad = 0.1):
+    def __init__(self, mass, vel, x_pos, rad = 0.01):
         self.mass = mass
         self.vel = vel
         self.x_pos = x_pos
@@ -109,7 +109,7 @@ def iteration(a, b, phantom = True, ellastic = True, step = time_step):
 a = Particle(10000000000, 0, 1.5)
 b = Particle(10000000000, 0, 3.5)
 
-time_phantom = 10000
+time_phantom = 1000000
 arr_phantom = np.zeros((time_phantom, 2, 4))
 
 # Index 0: Which time mark
@@ -133,7 +133,7 @@ for i in range(time_phantom):
 plt.plot(arr_phantom[:, 0, 0])
 plt.plot(arr_phantom[:, 1, 0])
 plt.title('Particles Path: Phantom')
-plt.xlabel('time (miliseconds)')
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('distance (meters)')
 plt.legend(['a', 'b'])
 plt.show()
@@ -142,7 +142,7 @@ plt.show()
 
 plt.plot(arr_phantom[:, 0, 2] + arr_phantom[:, 0, 3] + arr_phantom[:, 1, 2] + arr_phantom[:, 1, 3])
 plt.title('System energy: Phantom')
-plt.xlabel('time (miliseconds)')
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('energy (joules)')
 plt.legend(['a', 'b'])
 plt.show()
@@ -152,7 +152,7 @@ plt.plot(arr_phantom[:, 0, 3])
 plt.plot(arr_phantom[:, 1, 2])
 plt.plot(arr_phantom[:, 1, 3])
 plt.title('Particle energy: Phantom')
-plt.xlabel('time (miliseconds)')
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('energy (joules))')
 plt.legend(['a potential', 'a kinetic', 'b potential', 'b kinetic'])
 plt.show()
@@ -188,7 +188,7 @@ for i in range(time_ellastic):
 plt.plot(arr_ellastic[:, 0, 0])
 plt.plot(arr_ellastic[:, 1, 0])
 plt.title('Particles Path: Ellastic Collision')
-plt.xlabel('time (miliseconds)')
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('distance (meters)')
 plt.legend(['a', 'b'])
 plt.show()
@@ -198,7 +198,8 @@ plt.show()
 
 plt.plot(arr_ellastic[:, 0, 2] + arr_ellastic[:, 0, 3] + arr_ellastic[:, 1, 2] + arr_ellastic[:, 1, 3])
 plt.title('System energy: Ellastic Collision')
-plt.xlabel('time (miliseconds)')
+plt.ylim(-10000000000, 10000000000)
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('energy (joules)')
 plt.legend(['a', 'b'])
 plt.show()
@@ -208,7 +209,7 @@ plt.plot(arr_ellastic[:, 0, 3])
 plt.plot(arr_ellastic[:, 1, 2])
 plt.plot(arr_ellastic[:, 1, 3])
 plt.title('Particle energy: Ellastic')
-plt.xlabel('time (miliseconds)')
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('energy (joules))')
 plt.legend(['a potential', 'a kinetic', 'b potential', 'b kinetic'])
 plt.show()
@@ -218,7 +219,7 @@ plt.show()
 a = Particle(10000000000, 0, 1.5)
 b = Particle(10000000000, -2, 3.5)
 
-time_inellastic = 3000
+time_inellastic = 1000000
 arr_inellastic = np.zeros((time_inellastic, 2, 4))
 
 # Index 0: Which time mark
@@ -241,7 +242,7 @@ for i in range(time_inellastic):
 plt.plot(arr_inellastic[:, 0, 0])
 plt.plot(arr_inellastic[:, 1, 0])
 plt.title('Particles Path: Inellastic Collision')
-plt.xlabel('time (miliseconds)')
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('distance (meters)')
 plt.legend(['a', 'b'])
 plt.show()
@@ -250,7 +251,7 @@ plt.show()
 
 plt.plot(arr_inellastic[:, 0, 2] + arr_inellastic[:, 0, 3] + arr_inellastic[:, 1, 2] + arr_inellastic[:, 1, 3])
 plt.title('System energy: Inellastic Collision')
-plt.xlabel('time (miliseconds)')
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('energy (joules)')
 plt.legend(['a', 'b'])
 plt.show()
@@ -260,7 +261,7 @@ plt.plot(arr_inellastic[:, 0, 3])
 plt.plot(arr_inellastic[:, 1, 2])
 plt.plot(arr_inellastic[:, 1, 3])
 plt.title('Particle energy: Inellastic')
-plt.xlabel('time (miliseconds)')
+plt.xlabel('time (100 microseconds)')
 plt.ylabel('energy (joules))')
 plt.legend(['a potential', 'a kinetic', 'b potential', 'b kinetic'])
 plt.show()
