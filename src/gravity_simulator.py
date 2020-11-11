@@ -10,7 +10,7 @@ from scipy.constants import G as G
 import numpy as np
 import matplotlib.pyplot as plt
 from math import exp
-
+import pandas as pd
 
 #%%
 
@@ -159,8 +159,8 @@ plt.show()
 
 #%% Perfectly Ellastic
 
-a = Particle(10000000000, 0, 1.5)
-b = Particle(10000000000, 0, 3.5)
+a = Particle(10000000000, -0.1, 1.5)
+b = Particle(10000000000, 1, 3.5)
 
 time_ellastic = 100000
 arr_ellastic = np.zeros((time_ellastic, 2, 4))
@@ -311,7 +311,63 @@ plt.show()
 
 #%%
 
-## Data Capture
+## Data Capture of Phantom
+
+total_train = 9000
+total_test = 1000
+mass_base = 10000000000
+border = 5
+
+
+# Phantom
+# Index 0 is simulation number
+# Index 1 is particle 
+# Index 3 is particle's properties 
+# 0 = initial position
+# 1 = initial velocity 
+# 2 = mass
+# 3 = final position
+# 4 = final velocity 
+
+
+phantom_train = np.zeros((total_train, 2, 5))
+for i in range(total_train):
+    
+    a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+                 -1 + 2 * np.random.rand(),
+                 np.random() * 5)
+    b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+                 -1 + 2 * np.random.rand(),
+                 np.random() * 5)
+    
+    phantom_train[i][0][0] = a.x_pos
+    phantom_train[i][0][1] = a.vel
+    phantom_train[i][0][2] = a.mass
+    phantom_train[i][1][0] = b.x_pos
+    phantom_train[i][1][1] = b.vel
+    phantom_train[i][1][2] = b.mass
+    
+    time_phantom = 100000 
+    for i in range(time_phantom):
+        iteration(a, b)
+        
+    phantom_train[i][0][3] = a.x_pos
+    phantom_train[i][0][4] = a.vel
+    phantom_train[i][1][3] = b.x_pos
+    phantom_train[i][1][4] = b.vel
+
+data_phantom = {'initial position of a': phantom_train[:,0,0],
+        'initial position of b': phantom_train[:,1,0],
+        'initial velocity of a': phantom_train[:,0,1],
+        'initial velocity of b': phantom_train[:,1,1],
+        'mass of a': phantom_train[:,0,2],
+        'mass of b': phantom_train[:,1,2],
+        'final position of a': phantom_train[:,0,3],
+        'final position of b': phantom_train[:,1,3],
+        'final velocity of a': phantom_train[:,0,4],
+        'final velocity of b': phantom_train[:,1,4]}
+
+df_phantom = pd.
 
 
 
