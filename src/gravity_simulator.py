@@ -162,7 +162,7 @@ plt.show()
 
 #%% Perfectly Ellastic
 
-a = Particle(10000000000, 0, 1.5)
+a = Particle(10000000000, 1, 1.5)
 b = Particle(10000000000, 0, 1.6)
 
 time_ellastic = 100000
@@ -391,7 +391,7 @@ df_ellastic = pd.DataFrame(data_ellastic, columns = ['initial position of a',
 
 df_ellastic.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_training.csv')
 
-ellastic_test = np.zeros((total_train, 2, 5))
+ellastic_test = np.zeros((total_test, 2, 5))
 for i in range(total_test):
     
     a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
