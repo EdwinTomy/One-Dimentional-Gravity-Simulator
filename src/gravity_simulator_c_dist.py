@@ -22,11 +22,13 @@ total_train = 9000
 total_test = 1000
 mass_base = 10000000000
 border = 5
+
 class Particle():
-    def __init__(self, mass, vel, x_pos):
+    def __init__(self, mass, vel, x_pos, collided = 100000):
         self.mass = mass
         self.vel = vel
         self.x_pos = x_pos
+        self.collided = collided
         
     def potential_U(self, other):
         return -abs(G * self.mass * other.mass / (other.x_pos - self.x_pos))
@@ -78,21 +80,24 @@ def iteration(a, b, phantom = True, ellastic = True, step = time_step):
     pos_a = a.x_pos + step * (vel_a + a.vel)/2
     pos_b = b.x_pos + step * (vel_b + b.vel)/2
     
+
     
     # Collision
     if (a.x_pos > b.x_pos) != (pos_a > pos_b):
         if not phantom:
+            a.collided = 0
+            b.collided = 0
             if ellastic:
                 ellastic_collision(a, b)
-                bound(a)
-                bound(b)
+                #bound(a)
+                #bound(b)
                 return #collision 
             else:
                 inellastic_collision(a, b)
                 a.x_pos = pos_a
                 b.x_pos = pos_b
-                bound(a)
-                bound(b)
+                #bound(a)
+                #bound(b)
                 return #collision 
         
                  
@@ -102,20 +107,20 @@ def iteration(a, b, phantom = True, ellastic = True, step = time_step):
     b.x_pos = pos_b
     
     # Bounds the particles inside the border
-    bound(a)
-    bound(b)
+    #bound(a)
+    #bound(b)
+    
+    if abs(a.x_pos - b.x_pos) < a.collided:
+        a.collided = abs(pos_a - pos_b)
+        b.collided = abs(pos_a - pos_b)
     
     return #collision
     
 #%% Phantom
 
 # masses of 10 billion kg
-a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
-b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+a = Particle(10000000000, 0, 1.5)
+b = Particle(10000000000, 0, 1.6)
 
 time_phantom = 100000
 arr_phantom = np.zeros((time_phantom, 2, 4))
@@ -168,22 +173,26 @@ plt.show()
 
 
 #%% Perfectly Ellastic
-    
+
 a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
                  -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+                 2)
 b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
                  -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+                 3)
 
-time_ellastic = 100000
+
+time_ellastic = 10000
 arr_ellastic = np.zeros((time_ellastic, 2, 4))
 
 # Index 0: Which time mark
 # Index 1: Which particle 
 # Index 2: Which particle characteristic (x_pos, vel, potential_U, kinetic_E)
-
+collision = time_ellastic
 for i in range(time_ellastic):
+    
+    if a.collided==0 and (collision == time_ellastic):
+        collision = i
     #print('---------',i)
     arr_ellastic[i][0][0] = a.x_pos
     arr_ellastic[i][0][1] = a.vel
@@ -197,6 +206,9 @@ for i in range(time_ellastic):
     
     iteration(a, b, False)
     
+print(a.collided, collision)
+    
+
     
 plt.plot(arr_ellastic[:, 0, 0])
 plt.plot(arr_ellastic[:, 1, 0])
@@ -241,7 +253,7 @@ b = Particle(mass_base + mass_base * 4 * np.random.rand(),
                     2 * np.random.rand() - 1,
                     np.random.rand() * 5)
 
-time_inellastic = 100000
+time_inellastic = 1000
 arr_inellastic = np.zeros((time_inellastic, 2, 4))
 
 # Index 0: Which time mark
@@ -342,7 +354,7 @@ total_test = 1000
 mass_base = 10000000000
 border = 5
 
-# ellastic
+# collision_iwhen
 
 # Index 0 is simulation number
 # Index 1 is particle 
@@ -353,7 +365,7 @@ border = 5
 # 3 = final position
 # 4 = final velocity 
 
-ellastic_train = np.zeros((total_train, 2, 5))
+collision_when_train = np.zeros((total_train, 2, 6))
 for i in range(total_train):
     
     a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
@@ -363,33 +375,38 @@ for i in range(total_train):
                  -1 + 2 * np.random.rand(),
                  np.random.rand() * 5)
     
-    ellastic_train[i][0][0] = a.x_pos
-    ellastic_train[i][0][1] = a.vel
-    ellastic_train[i][0][2] = a.mass
-    ellastic_train[i][1][0] = b.x_pos
-    ellastic_train[i][1][1] = b.vel
-    ellastic_train[i][1][2] = b.mass
+    collision_when_train[i][0][0] = a.x_pos
+    collision_when_train[i][0][1] = a.vel
+    collision_when_train[i][0][2] = a.mass
+    collision_when_train[i][1][0] = b.x_pos
+    collision_when_train[i][1][1] = b.vel
+    collision_when_train[i][1][2] = b.mass
      
-    for j in range(100000):
+    collision = 50000
+    for j in range(50000):
+        if a.collided and (collision == 50000):
+            collision = j
         iteration(a, b, False)
         
-    ellastic_train[i][0][3] = a.x_pos
-    ellastic_train[i][0][4] = a.vel
-    ellastic_train[i][1][3] = b.x_pos
-    ellastic_train[i][1][4] = b.vel
+    collision_when_train[i][0][3] = a.x_pos
+    collision_when_train[i][0][4] = a.vel
+    collision_when_train[i][1][3] = b.x_pos
+    collision_when_train[i][1][4] = b.vel
+    collision_when_train[i][0][5] = collision
 
-data_ellastic = {'initial position of a': ellastic_train[:,0,0],
-        'initial position of b': ellastic_train[:,1,0],
-        'initial velocity of a': ellastic_train[:,0,1],
-        'initial velocity of b': ellastic_train[:,1,1],
-        'mass of a': ellastic_train[:,0,2],
-        'mass of b': ellastic_train[:,1,2],
-        'final position of a': ellastic_train[:,0,3],
-        'final position of b': ellastic_train[:,1,3],
-        'final velocity of a': ellastic_train[:,0,4],
-        'final velocity of b': ellastic_train[:,1,4]}
+data_collision_when = {'initial position of a': collision_when_train[:,0,0],
+        'initial position of b': collision_when_train[:,1,0],
+        'initial velocity of a': collision_when_train[:,0,1],
+        'initial velocity of b': collision_when_train[:,1,1],
+        'mass of a': collision_when_train[:,0,2],
+        'mass of b': collision_when_train[:,1,2],
+        'final position of a': collision_when_train[:,0,3],
+        'final position of b': collision_when_train[:,1,3],
+        'final velocity of a': collision_when_train[:,0,4],
+        'final velocity of b': collision_when_train[:,1,4],
+        'collision time' : collision_when_train[:,0,5]}
 
-df_ellastic = pd.DataFrame(data_ellastic, columns = ['initial position of a',
+df_collision_when = pd.DataFrame(data_collision_when, columns = ['initial position of a',
         'initial position of b',
         'initial velocity of a',
         'initial velocity of b',
@@ -398,11 +415,12 @@ df_ellastic = pd.DataFrame(data_ellastic, columns = ['initial position of a',
         'final position of a',
         'final position of b',
         'final velocity of a',
-        'final velocity of b'])
+        'final velocity of b',
+        'collision time'])
 
-df_ellastic.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_training.csv')
+df_collision_when.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/collision_when_training.csv')
 
-ellastic_test = np.zeros((total_test, 2, 5))
+collision_when_test = np.zeros((total_test, 2, 6))
 for i in range(total_test):
     
     a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
@@ -412,33 +430,38 @@ for i in range(total_test):
                  -1 + 2 * np.random.rand(),
                  np.random.rand() * 5)
     
-    ellastic_test[i][0][0] = a.x_pos
-    ellastic_test[i][0][1] = a.vel
-    ellastic_test[i][0][2] = a.mass
-    ellastic_test[i][1][0] = b.x_pos
-    ellastic_test[i][1][1] = b.vel
-    ellastic_test[i][1][2] = b.mass
+    collision_when_test[i][0][0] = a.x_pos
+    collision_when_test[i][0][1] = a.vel
+    collision_when_test[i][0][2] = a.mass
+    collision_when_test[i][1][0] = b.x_pos
+    collision_when_test[i][1][1] = b.vel
+    collision_when_test[i][1][2] = b.mass
      
-    for j in range(100000):
+    collision = 50000
+    for j in range(50000):
+        if a.collided and (collision == 50000):
+            collision = j
         iteration(a, b, False)
         
-    ellastic_test[i][0][3] = a.x_pos
-    ellastic_test[i][0][4] = a.vel
-    ellastic_test[i][1][3] = b.x_pos
-    ellastic_test[i][1][4] = b.vel
+    collision_when_test[i][0][3] = a.x_pos
+    collision_when_test[i][0][4] = a.vel
+    collision_when_test[i][1][3] = b.x_pos
+    collision_when_test[i][1][4] = b.vel
+    collision_when_test[i][0][5] = collision
 
-data_ellastic_test = {'initial position of a': ellastic_test[:,0,0],
-        'initial position of b': ellastic_test[:,1,0],
-        'initial velocity of a': ellastic_test[:,0,1],
-        'initial velocity of b': ellastic_test[:,1,1],
-        'mass of a': ellastic_test[:,0,2],
-        'mass of b': ellastic_test[:,1,2],
-        'final position of a': ellastic_test[:,0,3],
-        'final position of b': ellastic_test[:,1,3],
-        'final velocity of a': ellastic_test[:,0,4],
-        'final velocity of b': ellastic_test[:,1,4]}
+data_collision_when_test = {'initial position of a': collision_when_test[:,0,0],
+        'initial position of b': collision_when_test[:,1,0],
+        'initial velocity of a': collision_when_test[:,0,1],
+        'initial velocity of b': collision_when_test[:,1,1],
+        'mass of a': collision_when_test[:,0,2],
+        'mass of b': collision_when_test[:,1,2],
+        'final position of a': collision_when_test[:,0,3],
+        'final position of b': collision_when_test[:,1,3],
+        'final velocity of a': collision_when_test[:,0,4],
+        'final velocity of b': collision_when_test[:,1,4],
+        'collision time' : collision_when_test[:,0,5]}
 
-df_ellastic_test = pd.DataFrame(data_ellastic_test, columns = ['initial position of a',
+df_collision_when_test = pd.DataFrame(data_collision_when_test, columns = ['initial position of a',
         'initial position of b',
         'initial velocity of a',
         'initial velocity of b',
@@ -447,12 +470,15 @@ df_ellastic_test = pd.DataFrame(data_ellastic_test, columns = ['initial position
         'final position of a',
         'final position of b',
         'final velocity of a',
-        'final velocity of b'])
+        'final velocity of b',
+        'collision time'])
 
-df_ellastic_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_testing.csv')
 
+#%%
+df_collision_when_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/collision_when_testing.csv')
+#%%
 
-# Phantom
+# collision_if
 # Index 0 is simulation number
 # Index 1 is particle 
 # Index 3 is particle's properties 
@@ -462,44 +488,46 @@ df_ellastic_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data
 # 3 = final position
 # 4 = final velocity 
 
-phantom_train = np.zeros((total_train, 2, 5))
+collision_if_train = np.zeros((total_train, 2, 6))
 for i in range(total_train):
     
-    a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+    a = Particle(mass_base, 
                  -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
-    b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+                 3)
+    b = Particle(mass_base, 
                  -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+                 2)
     
-    phantom_train[i][0][0] = a.x_pos
-    phantom_train[i][0][1] = a.vel
-    phantom_train[i][0][2] = a.mass
-    phantom_train[i][1][0] = b.x_pos
-    phantom_train[i][1][1] = b.vel
-    phantom_train[i][1][2] = b.mass
+    collision_if_train[i][0][0] = a.x_pos
+    collision_if_train[i][0][1] = a.vel
+    collision_if_train[i][0][2] = a.mass
+    collision_if_train[i][1][0] = b.x_pos
+    collision_if_train[i][1][1] = b.vel
+    collision_if_train[i][1][2] = b.mass
      
-    for j in range(100000):
-        iteration(a, b)
+    for j in range(10000):
+        iteration(a, b, False)
         
-    phantom_train[i][0][3] = a.x_pos
-    phantom_train[i][0][4] = a.vel
-    phantom_train[i][1][3] = b.x_pos
-    phantom_train[i][1][4] = b.vel
+    collision_if_train[i][0][3] = a.x_pos
+    collision_if_train[i][0][4] = a.vel
+    collision_if_train[i][1][3] = b.x_pos
+    collision_if_train[i][1][4] = b.vel
+    collision_if_train[i][0][5] = a.collided
 
 
-data_phantom = {'initial position of a': phantom_train[:,0,0],
-        'initial position of b': phantom_train[:,1,0],
-        'initial velocity of a': phantom_train[:,0,1],
-        'initial velocity of b': phantom_train[:,1,1],
-        'mass of a': phantom_train[:,0,2],
-        'mass of b': phantom_train[:,1,2],
-        'final position of a': phantom_train[:,0,3],
-        'final position of b': phantom_train[:,1,3],
-        'final velocity of a': phantom_train[:,0,4],
-        'final velocity of b': phantom_train[:,1,4]}
+data_collision_if = {'initial position of a': collision_if_train[:,0,0],
+        'initial position of b': collision_if_train[:,1,0],
+        'initial velocity of a': collision_if_train[:,0,1],
+        'initial velocity of b': collision_if_train[:,1,1],
+        'mass of a': collision_if_train[:,0,2],
+        'mass of b': collision_if_train[:,1,2],
+        'final position of a': collision_if_train[:,0,3],
+        'final position of b': collision_if_train[:,1,3],
+        'final velocity of a': collision_if_train[:,0,4],
+        'final velocity of b': collision_if_train[:,1,4],
+        'if collided':collision_if_train[:,0,5]}
 
-df_phantom = pd.DataFrame(data_phantom, columns = ['initial position of a',
+df_collision_if = pd.DataFrame(data_collision_if, columns = ['initial position of a',
         'initial position of b',
         'initial velocity of a',
         'initial velocity of b',
@@ -508,49 +536,52 @@ df_phantom = pd.DataFrame(data_phantom, columns = ['initial position of a',
         'final position of a',
         'final position of b',
         'final velocity of a',
-        'final velocity of b'])
+        'final velocity of b',
+        'if collided'])
 
-df_phantom.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_training.csv')
+df_collision_if.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/collision_if_dist_training.csv')
 
-phantom_test = np.zeros((total_test, 2, 5))
+collision_if_test = np.zeros((total_test, 2, 6))
 for i in range(total_test):
     
-    a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+    a = Particle(mass_base, 
                  -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
-    b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+                 3)
+    b = Particle(mass_base, 
                  -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+                 2)
     
-    phantom_test[i][0][0] = a.x_pos
-    phantom_test[i][0][1] = a.vel
-    phantom_test[i][0][2] = a.mass
-    phantom_test[i][1][0] = b.x_pos
-    phantom_test[i][1][1] = b.vel
-    phantom_test[i][1][2] = b.mass
+    collision_if_test[i][0][0] = a.x_pos
+    collision_if_test[i][0][1] = a.vel
+    collision_if_test[i][0][2] = a.mass
+    collision_if_test[i][1][0] = b.x_pos
+    collision_if_test[i][1][1] = b.vel
+    collision_if_test[i][1][2] = b.mass
      
-    for j in range(100000):
-        iteration(a, b)
+    for j in range(10000):
+        iteration(a, b, False)
         
-    phantom_test[i][0][3] = a.x_pos
-    phantom_test[i][0][4] = a.vel
-    phantom_test[i][1][3] = b.x_pos
-    phantom_test[i][1][4] = b.vel
+    collision_if_test[i][0][3] = a.x_pos
+    collision_if_test[i][0][4] = a.vel
+    collision_if_test[i][1][3] = b.x_pos
+    collision_if_test[i][1][4] = b.vel
+    collision_if_test[i][0][5] = a.collided
     
     #print(a.x_pos, a.vel, b.x_pos, b.vel)
 
-data_phantom_test = {'initial position of a': phantom_test[:,0,0],
-        'initial position of b': phantom_test[:,1,0],
-        'initial velocity of a': phantom_test[:,0,1],
-        'initial velocity of b': phantom_test[:,1,1],
-        'mass of a': phantom_test[:,0,2],
-        'mass of b': phantom_test[:,1,2],
-        'final position of a': phantom_test[:,0,3],
-        'final position of b': phantom_test[:,1,3],
-        'final velocity of a': phantom_test[:,0,4],
-        'final velocity of b': phantom_test[:,1,4]}
+data_collision_if_test = {'initial position of a': collision_if_test[:,0,0],
+        'initial position of b': collision_if_test[:,1,0],
+        'initial velocity of a': collision_if_test[:,0,1],
+        'initial velocity of b': collision_if_test[:,1,1],
+        'mass of a': collision_if_test[:,0,2],
+        'mass of b': collision_if_test[:,1,2],
+        'final position of a': collision_if_test[:,0,3],
+        'final position of b': collision_if_test[:,1,3],
+        'final velocity of a': collision_if_test[:,0,4],
+        'final velocity of b': collision_if_test[:,1,4],
+        'if collided': collision_if_test[:,0,5]}
 
-df_phantom_test = pd.DataFrame(data_phantom_test, columns = ['initial position of a',
+df_collision_if_test = pd.DataFrame(data_collision_if_test, columns = ['initial position of a',
         'initial position of b',
         'initial velocity of a',
         'initial velocity of b',
@@ -559,9 +590,10 @@ df_phantom_test = pd.DataFrame(data_phantom_test, columns = ['initial position o
         'final position of a',
         'final position of b',
         'final velocity of a',
-        'final velocity of b'])
+        'final velocity of b',
+        'if collided'])
 
-df_phantom_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_testing.csv')
+df_collision_if_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/collision_if_dist_testing.csv')
 
 #%%
 

@@ -15,13 +15,10 @@ import pandas as pd
 #%%
 
 upper_border = 5
-time_step = 0.0001
+time_step = 0.00001
 soften = 10 #exponente^(-r/lamba)
-lam = 0.1
-total_train = 9000
-total_test = 1000
-mass_base = 10000000000
-border = 5
+lam = 0.01
+
 class Particle():
     def __init__(self, mass, vel, x_pos):
         self.mass = mass
@@ -110,12 +107,8 @@ def iteration(a, b, phantom = True, ellastic = True, step = time_step):
 #%% Phantom
 
 # masses of 10 billion kg
-a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
-b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+a = Particle(10000000000, 0, 1.5)
+b = Particle(10000000000, 0, 1.6)
 
 time_phantom = 100000
 arr_phantom = np.zeros((time_phantom, 2, 4))
@@ -168,13 +161,9 @@ plt.show()
 
 
 #%% Perfectly Ellastic
-    
-a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
-b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+
+a = Particle(10000000000, 1, 1.5)
+b = Particle(10000000000, 0, 1.6)
 
 time_ellastic = 100000
 arr_ellastic = np.zeros((time_ellastic, 2, 4))
@@ -370,7 +359,7 @@ for i in range(total_train):
     ellastic_train[i][1][1] = b.vel
     ellastic_train[i][1][2] = b.mass
      
-    for j in range(100000):
+    for j in range(1000000):
         iteration(a, b, False)
         
     ellastic_train[i][0][3] = a.x_pos
@@ -400,7 +389,7 @@ df_ellastic = pd.DataFrame(data_ellastic, columns = ['initial position of a',
         'final velocity of a',
         'final velocity of b'])
 
-df_ellastic.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_training.csv')
+df_ellastic.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_training_ex.csv')
 
 ellastic_test = np.zeros((total_test, 2, 5))
 for i in range(total_test):
@@ -419,7 +408,7 @@ for i in range(total_test):
     ellastic_test[i][1][1] = b.vel
     ellastic_test[i][1][2] = b.mass
      
-    for j in range(100000):
+    for j in range(1000000):
         iteration(a, b, False)
         
     ellastic_test[i][0][3] = a.x_pos
@@ -449,7 +438,7 @@ df_ellastic_test = pd.DataFrame(data_ellastic_test, columns = ['initial position
         'final velocity of a',
         'final velocity of b'])
 
-df_ellastic_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_testing.csv')
+df_ellastic_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_testing_ex.csv')
 
 
 # Phantom
@@ -479,7 +468,7 @@ for i in range(total_train):
     phantom_train[i][1][1] = b.vel
     phantom_train[i][1][2] = b.mass
      
-    for j in range(100000):
+    for j in range(1000000):
         iteration(a, b)
         
     phantom_train[i][0][3] = a.x_pos
@@ -510,7 +499,7 @@ df_phantom = pd.DataFrame(data_phantom, columns = ['initial position of a',
         'final velocity of a',
         'final velocity of b'])
 
-df_phantom.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_training.csv')
+df_phantom.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_training_ex.csv')
 
 phantom_test = np.zeros((total_test, 2, 5))
 for i in range(total_test):
@@ -529,7 +518,7 @@ for i in range(total_test):
     phantom_test[i][1][1] = b.vel
     phantom_test[i][1][2] = b.mass
      
-    for j in range(100000):
+    for j in range(1000000):
         iteration(a, b)
         
     phantom_test[i][0][3] = a.x_pos
@@ -561,7 +550,7 @@ df_phantom_test = pd.DataFrame(data_phantom_test, columns = ['initial position o
         'final velocity of a',
         'final velocity of b'])
 
-df_phantom_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_testing.csv')
+df_phantom_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_testing_ex.csv')
 
 #%%
 

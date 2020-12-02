@@ -18,10 +18,7 @@ upper_border = 5
 time_step = 0.0001
 soften = 10 #exponente^(-r/lamba)
 lam = 0.1
-total_train = 9000
-total_test = 1000
-mass_base = 10000000000
-border = 5
+
 class Particle():
     def __init__(self, mass, vel, x_pos):
         self.mass = mass
@@ -110,12 +107,8 @@ def iteration(a, b, phantom = True, ellastic = True, step = time_step):
 #%% Phantom
 
 # masses of 10 billion kg
-a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
-b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+a = Particle(10000000000, 0, 1.5)
+b = Particle(10000000000, 0, 1.6)
 
 time_phantom = 100000
 arr_phantom = np.zeros((time_phantom, 2, 4))
@@ -168,13 +161,9 @@ plt.show()
 
 
 #%% Perfectly Ellastic
-    
-a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
-b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
-                 -1 + 2 * np.random.rand(),
-                 np.random.rand() * 5)
+
+a = Particle(10000000000, 1, 1.5)
+b = Particle(10000000000, 0, 1.6)
 
 time_ellastic = 100000
 arr_ellastic = np.zeros((time_ellastic, 2, 4))
