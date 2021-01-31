@@ -12,7 +12,9 @@ import matplotlib.pyplot as plt
 from math import exp
 import pandas as pd
 
+
 #%%
+
 
 upper_border = 5
 time_step = 0.0001

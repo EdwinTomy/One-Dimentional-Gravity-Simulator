@@ -364,7 +364,6 @@ border = 5
 # 2 = mass
 # 3 = final position
 # 4 = final velocity 
-
 collision_when_train = np.zeros((total_train, 2, 6))
 for i in range(total_train):
     
@@ -384,10 +383,12 @@ for i in range(total_train):
      
     collision = 50000
     for j in range(50000):
-        if a.collided and (collision == 50000):
+        if a.collided == 0 and (collision == 50000):
             collision = j
+            break
         iteration(a, b, False)
-        
+    
+    
     collision_when_train[i][0][3] = a.x_pos
     collision_when_train[i][0][4] = a.vel
     collision_when_train[i][1][3] = b.x_pos
@@ -439,8 +440,9 @@ for i in range(total_test):
      
     collision = 50000
     for j in range(50000):
-        if a.collided and (collision == 50000):
+        if a.collided == 0 and (collision == 50000):
             collision = j
+            break
         iteration(a, b, False)
         
     collision_when_test[i][0][3] = a.x_pos
@@ -476,6 +478,7 @@ df_collision_when_test = pd.DataFrame(data_collision_when_test, columns = ['init
 
 df_collision_when_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/collision_when_testing_no_b.csv')
 
+#%%
 # collision_if
 # Index 0 is simulation number
 # Index 1 is particle 
@@ -542,12 +545,12 @@ df_collision_if.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/
 collision_if_test = np.zeros((total_test, 2, 6))
 for i in range(total_test):
     
-    a = Particle(mass_base, 
+    a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
                  -1 + 2 * np.random.rand(),
-                 3)
-    b = Particle(mass_base, 
+                 np.random.rand() * 5)
+    b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
                  -1 + 2 * np.random.rand(),
-                 2)
+                 np.random.rand() * 5)
     
     collision_if_test[i][0][0] = a.x_pos
     collision_if_test[i][0][1] = a.vel

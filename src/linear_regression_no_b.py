@@ -10,8 +10,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 
 #%%
-df_train_phantom = pd.read_csv('data/phantom_training.csv')
-df_test_phantom = pd.read_csv('data/phantom_testing.csv')
+df_train_phantom = pd.read_csv('data/phantom_training_no_b.csv')
+df_test_phantom = pd.read_csv('data/phantom_testing_no_b.csv')
 
 x_phantom = df_train_phantom[['initial position of a',
         'initial position of b',
@@ -53,8 +53,8 @@ plt.show()
 
 #%%
 
-df_train_ellastic = pd.read_csv('data/ellastic_training.csv')
-df_test_ellastic = pd.read_csv('data/ellastic_testing.csv')
+df_train_ellastic = pd.read_csv('data/ellastic_training_no_b.csv')
+df_test_ellastic = pd.read_csv('data/ellastic_testing_no_b.csv')
 
 x_ellastic = df_train_ellastic[['initial position of a',
         'initial position of b',
@@ -95,8 +95,8 @@ plt.show()
 
 #%%
 
-df_train_collision_when = pd.read_csv('data/collision_when_training.csv')
-df_test_collision_when = pd.read_csv('data/collision_when_testing.csv')
+df_train_collision_when = pd.read_csv('data/collision_when_training_no_b.csv')
+df_test_collision_when = pd.read_csv('data/collision_when_testing_no_b.csv')
 
 x_collision_when = df_train_collision_when[['initial position of a',
         'initial position of b',
@@ -184,8 +184,8 @@ plt.show()
 
 #%%
 
-df_train_collision_if_dist = pd.read_csv('data/collision_if_dist_training.csv')
-df_test_collision_if_dist = pd.read_csv('data/collision_if_dist_testing.csv')
+df_train_collision_if_dist = pd.read_csv('data/collision_if_dist_training_no_b.csv')
+df_test_collision_if_dist = pd.read_csv('data/collision_if_dist_testing_no_b.csv')
 
 x_collision_if_dist = df_train_collision_if_dist[[
         'initial velocity of a',

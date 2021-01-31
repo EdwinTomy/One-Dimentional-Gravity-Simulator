@@ -18,6 +18,9 @@ upper_border = 5
 time_step = 0.0001
 soften = 10 #exponente^(-r/lamba)
 lam = 0.1
+total_test = 1000
+mass_base = 10000000000
+border = 5
 
 class Particle():
     def __init__(self, mass, vel, x_pos):
@@ -81,15 +84,15 @@ def iteration(a, b, phantom = True, ellastic = True, step = time_step):
         if not phantom:
             if ellastic:
                 ellastic_collision(a, b)
-                bound(a)
-                bound(b)
+                #bound(a)
+                #bound(b)
                 return #collision 
             else:
                 inellastic_collision(a, b)
                 a.x_pos = pos_a
                 b.x_pos = pos_b
-                bound(a)
-                bound(b)
+                #bound(a)
+                #bound(b)
                 return #collision 
         
                  
@@ -99,16 +102,22 @@ def iteration(a, b, phantom = True, ellastic = True, step = time_step):
     b.x_pos = pos_b
     
     # Bounds the particles inside the border
-    bound(a)
-    bound(b)
+    #bound(a)
+    #bound(b)
     
     return #collision
     
 #%% Phantom
 
 # masses of 10 billion kg
-a = Particle(10000000000, 0, 1.5)
-b = Particle(10000000000, 0, 1.6)
+a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+                 2 * np.random.rand() - 1,
+                 np.random.rand() * 5)
+
+b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+                    2 * np.random.rand() - 1,
+                    np.random.rand() * 5)
+
 
 time_phantom = 100000
 arr_phantom = np.zeros((time_phantom, 2, 4))
@@ -162,8 +171,14 @@ plt.show()
 
 #%% Perfectly Ellastic
 
-a = Particle(10000000000, 1, 1.5)
-b = Particle(10000000000, 0, 1.6)
+a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+                 2 * np.random.rand() - 1,
+                 np.random.rand() * 5)
+
+b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
+                    2 * np.random.rand() - 1,
+                    np.random.rand() * 5)
+
 
 time_ellastic = 100000
 arr_ellastic = np.zeros((time_ellastic, 2, 4))
@@ -348,6 +363,7 @@ for i in range(total_train):
     a = Particle(mass_base + mass_base * 4 * np.random.rand(), 
                  -1 + 2 * np.random.rand(),
                  np.random.rand() * 5)
+    
     b = Particle(mass_base + mass_base * 4 * np.random.rand(), 
                  -1 + 2 * np.random.rand(),
                  np.random.rand() * 5)
@@ -389,7 +405,7 @@ df_ellastic = pd.DataFrame(data_ellastic, columns = ['initial position of a',
         'final velocity of a',
         'final velocity of b'])
 
-df_ellastic.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_training.csv')
+df_ellastic.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_training_no_b.csv')
 
 ellastic_test = np.zeros((total_test, 2, 5))
 for i in range(total_test):
@@ -438,7 +454,7 @@ df_ellastic_test = pd.DataFrame(data_ellastic_test, columns = ['initial position
         'final velocity of a',
         'final velocity of b'])
 
-df_ellastic_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_testing.csv')
+df_ellastic_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/ellastic_testing_no_b.csv')
 
 
 # Phantom
@@ -499,7 +515,7 @@ df_phantom = pd.DataFrame(data_phantom, columns = ['initial position of a',
         'final velocity of a',
         'final velocity of b'])
 
-df_phantom.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_training.csv')
+df_phantom.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_training_no_b.csv')
 
 phantom_test = np.zeros((total_test, 2, 5))
 for i in range(total_test):
@@ -550,7 +566,7 @@ df_phantom_test = pd.DataFrame(data_phantom_test, columns = ['initial position o
         'final velocity of a',
         'final velocity of b'])
 
-df_phantom_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_testing.csv')
+df_phantom_test.to_csv('/Users/edwintomy/One Dimensional Gravity Simulator/data/phantom_testing_no_b.csv')
 
 #%%
 
